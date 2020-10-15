@@ -3,19 +3,20 @@ import axios from 'axios'
 import QrReader from 'react-qr-reader'
 import './App.css';
 import Swal from 'sweetalert2'
+import CartIcon from './image/download.png';
 function App() {
 
   let [result, setResult] = useState('')
-
+  let port = 'http://103.150.32.12:3003';
   
 
   let scanner = (data) => {
     if (data) {
       axios({
         method: 'GET', 
-        url: `http://localhost:8000/seeUser/${result}`
+        url: `${port}/seeUser/${result}`
       }).then((response) => {
-        if (response.data == null) {
+        if (response.data[0] != null) {
           validateQR(data)
         }else{
           Swal.fire({
@@ -38,7 +39,7 @@ function App() {
   let process = (data) => {
     axios({
       method: 'GET',
-      url: `http://localhost:8000/createAbsence/${data}`
+      url: `${port}/createAbsence/${data}`
     }).then((response) => {
       Swal.fire({
         title: 'success',
@@ -61,9 +62,10 @@ function App() {
    
     axios({
       method: 'GET', 
-      url: `http://localhost:8000/seeUser/${result}`
+      url: `${port}/seeUser/${result}`
     }).then((response) => {
-      if (response.data == null) {
+      if (response.data[0] != null) {
+        
         validate()
       }else{
         Swal.fire({
@@ -85,7 +87,7 @@ function App() {
   let validateQR = (data) => {
     axios({
       method: 'GET',
-      url: `http://localhost:8000/absenceGet/${data}`
+      url: `${port}/absenceGet/${data}`
     }).then((response) => {
       if (response.data[0] == null) {
         process(result)
@@ -114,7 +116,7 @@ function App() {
   let validate = () => {
     axios({
       method: 'GET',
-      url: `http://localhost:8000/absenceGet/${result}`
+      url: `${port}/absenceGet/${result}`
     }).then((response) => {
       if (response.data[0] == null) {
         process(result)
@@ -149,7 +151,7 @@ function App() {
   <div className="modal-dialog" role="document">
     <div className="modal-content">
       <div className="modal-header">
-        <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 className="modal-title" id="exampleModalLabel">Absen</h5>
         <button type="button" className="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
@@ -190,7 +192,7 @@ function App() {
     <div className="container-fluid">
       <div className="row justify-content-center">
         <div className="col-xl-11 d-flex align-items-center">
-          <h1 className="logo mr-auto"><a href="index.html">SMEKANEDA</a></h1>
+          <h1 className="logo mr-auto"><a href="index.html"><img src={CartIcon} style={{width: 40, height: 90}}/><span style={{marginLeft: 9}}>Absen Siswa SMKN 2 Trengale</span>k</a></h1>
           {/* Uncomment below if you prefer to use an image logo */}
           {/* <a href="index.html" class="logo mr-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>*/}
          
