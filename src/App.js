@@ -7,17 +7,23 @@ import CartIcon from './image/download.png';
 function App() {
 
   let [result, setResult] = useState('')
-  let port = 'http://103.150.32.12:3003';
+  let port = 'http://localhost:3003';
   
 
   let scanner = (data) => {
     if (data) {
       axios({
         method: 'GET', 
-        url: `${port}/seeUser/${result}`
+        url: `${port}/seeUser/${data}`
       }).then((response) => {
         if (response.data[0] != null) {
-          validateQR(data)
+          let setData = {
+          'data' : data,
+          'majors' : response.data[0].majors,
+          'class' : response.data[0].class,
+          'letter' : response.data[0].letter
+        }
+          validateQR(setData)
         }else{
           Swal.fire({
             title: 'Maaf',
@@ -36,10 +42,10 @@ function App() {
     }
   }
 
-  let process = (data) => {
+  let process = (setData) => {
     axios({
       method: 'GET',
-      url: `${port}/createAbsence/${data}`
+      url: `${port}/createAbsence/${setData.data}/${setData.majors}/${setData.class}/${setData.letter}`
     }).then((response) => {
       Swal.fire({
         title: 'success',
@@ -64,9 +70,15 @@ function App() {
       method: 'GET', 
       url: `${port}/seeUser/${result}`
     }).then((response) => {
+      
       if (response.data[0] != null) {
-        
-        validate()
+        let setData = {
+          'data' : result,
+          'majors' : response.data[0].majors,
+          'class' : response.data[0].class,
+          'letter' : response.data[0].letter
+        }
+        validate(setData)
       }else{
         Swal.fire({
           title: 'Maaf',
@@ -84,16 +96,16 @@ function App() {
     })
   }
 
-  let validateQR = (data) => {
+  let validateQR = (setData) => {
     axios({
       method: 'GET',
-      url: `${port}/absenceGet/${data}`
+      url: `${port}/absenceGet/${setData.data}`
     }).then((response) => {
       if (response.data[0] == null) {
-        process(result)
+        process(setData)
       }else{
-        if (response.data[0].nik != data) {
-          process(data)
+        if (response.data[0].nik != setData.data) {
+          process(setData)
         }else{
           Swal.fire({
             title: 'Maaf',
@@ -113,13 +125,13 @@ function App() {
     })
   }
 
-  let validate = () => {
+  let validate = (setData) => {
     axios({
       method: 'GET',
       url: `${port}/absenceGet/${result}`
     }).then((response) => {
       if (response.data[0] == null) {
-        process(result)
+        process(setData)
       }else{
         if (response.data[0].nik != result) {
           process(result)
